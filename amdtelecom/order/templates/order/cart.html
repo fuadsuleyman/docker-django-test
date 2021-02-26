@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% load static %}
+{% if order != None %}
+
+<!-- breadcrumb start -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h2>cart</h2>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index:amd-home' %}">Home</a></li>
+                        <li class="breadcrumb-item active">cart</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- breadcrumb End -->
+
+
+<!--section start-->
+<section class="cart-section section-b-space">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table cart-table table-responsive-xs">
+                    <thead>
+                        <tr class="table-head">
+                            <th scope="col">image</th>
+                            <th scope="col">product name</th>
+                            <th scope="col">price</th>
+                            <th scope="col">quantity</th>
+                            <th scope="col">action</th>
+                            <th scope="col">total</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for item in order.orderitem_set.all %}
+                        <tr>
+                            <td>
+                                {% for id, img in imgs.items %}
+                                    {% if id == item.id %}
+                                        <a href="#"><img src="{{ img }}" alt=""></a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td><a class="product-title" href="{% url 'product:product-detail' item.product.id %}">{{item.product.title}}</a>
+                                <div class="mobile-cart-content row">
+                                    <div class="col-xs-3">
+                                        <div class="qty-box">
+                                            <div class="input-group">
+                                                <input type="text" name="quantity" class="form-control input-number"
+                                                    value="1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <h2 class="td-color" class='data-price'>$ {{item.product.price}}</h2>
+                                    </div>
+                                    <div class="col-xs-3 cartquantity">
+                                        <h2 class="td-color"><a href="{% url 'order:deletefromcart' item.product.id %}" class="icon"><i class="ti-close"></i></a>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <h2>$ {{item.product.price}}</h2>
+                            </td>
+                            <td>
+                                <div class="qty-box">
+                                    <div class="input-group">
+                                        <input
+                                            max="9"
+                                            min="0"
+                                            type="number"
+                                            name="quantity"
+                                            data-id-patch={{item.id}} 
+                                            class="form-control input-number change-quantity"
+                                            value="{{item.quantity}}" on
+                                            onchange="confirm_update(event);">
+                                    </div>
+                                </div>
+                            </td>
+                            <td><a href="#" class="icon" id="delete-order-item"><i data-id={{item.id}} class="ti-close" onclick="confirm_delete(event);"></i></a></td>
+                            <td>
+                                <h2 class="td-color">$ <span class="td-color price-total">{{item.get_total|floatformat:2}}</span></h2>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+                <table class="table cart-table table-responsive-md">
+                    <tfoot>
+                        <tr>
+                            <td>total price :</td>
+                            <td>
+                                <h2>$<span class="price-total-grand">{{order.get_cart_total|floatformat:2}}</span></h2>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="row cart-buttons">
+            <div class="col-6"><a href="{% url 'index:amd-home' %}" class="btn btn-solid">continue shopping</a></div>
+            <div class="col-6"><a href="#" class="btn btn-solid">check out</a></div>
+        </div>
+    </div>
+</section>
+<script>
+
+    let addCartCountToLocalStorage = (count) => {
+        localStorage.setItem('cartItems', count)
+    }
+
+    let getGrandTotal = (arr) => {
+                let sum = 0
+                for (let i of arr){
+                    sum += i
+                }
+                return sum
+            }
+
+    function confirm_delete(e){
+
+        
+        // console.log(e.target)
+        let id = e.target.getAttribute('data-id')
+        e.target.closest("tr").remove()
+        // console.log(`id delete ${id}`)
+
+        const url = `http://localhost:8000/api-order/orderItem-delete/${id}/`;
+
+        let allTotalPrices = document.querySelectorAll(".price-total")
+
+        // console.log("Welcome to delete")
+
+        
+
+        grandTotalPriceInt = []
+        
+        for (let i=0; i < allTotalPrices.length; i++){
+            grandTotalPriceInt.push(parseInt(allTotalPrices[i].innerHTML)) 
+        }
+
+        // console.log(`Totallrain cemi deletden sonra: ${grandTotalPriceInt}`)
+
+        // document.querySelector(".price-total-grand").innerHTML = getGrandTotal(grandTotalPriceInt).toFixed(2)
+
+        // addCartCountToLocalStorage(document.querySelectorAll(".product-title").length)
+
+        
+
+        // let allTotalPrices = document.querySelectorAll(".price-total")
+
+        // grandTotalPriceInt = []
+
+        // for (let i=0; i < allTotalPrices.length; i++){
+        //     grandTotalPriceInt.push(parseInt(allTotalPrices[i].innerHTML)) 
+        // }
+
+        // document.querySelector(".price-total-grand").innerHTML = getGrandTotal(grandTotalPriceInt).toFixed(2)
+
+        e.preventDefault()
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrftoken 
+            },
+        })
+        .then(res => res.text()) // or res.json()
+        .then(res => console.log(`deleted ${res}`))
+        .then(res => addCartCountToLocalStorage(document.querySelectorAll(".product-title").length))
+        // .then(res => window.location.reload())
+    }
+
+    function confirm_update(e){
+        let id_patch = e.target.getAttribute('data-id-patch')
+        const url_patch = `http://localhost:8000/api-order/orderItem-patch/${id_patch}/`;
+        const url_del = `http://localhost:8000/api-order/orderItem-delete/${id_patch}/`;
+
+        let clickedTr = e.target.closest("tr")
+        // console.log(e.target.closest("tr").childNodes[11].querySelector(".price-total").innerHTML)
+        // console.log(`price: ${parseInt(e.target.closest("tr").childNodes[5].querySelector("h2").innerHTML.split(" ")[1])}`)
+        clickedPrice = parseInt(e.target.closest("tr").childNodes[5].querySelector("h2").innerHTML.split(" ")[1])
+        // console.log(clickedPrice)
+        // let pric = clickedTr[0].querySelector(".data-price")
+        // console.log(pric)
+
+        // let price2 = document.querySelectorAll('.data-price')
+        // console.log(`tr id: ${price2}`)
+
+        // for (let i=0; i < price2.length; i++){
+            // console.log(`target from loop: ${e.target}`)
+            // console.log(`from loop: ${price2[i].innerHTML}`)
+        //     console.log(`id from loop ${e.target.closest("td").getElementsByClassName('.data-price').innerHTML}`)
+        // }
+
+        // console.log(typeof(price2))
+        // console.log(`price2: ${price2}`)
+        // let priceSplited = price2.split(' ')
+        // priceInt = parseInt(priceSplited[1])
+        let quantity = e.target.value
+        // console.log(priceInt)
+
+        // document.querySelector('.price-total').innerHTML = (clickedPrice * quantity).toFixed(2)
+
+        // e.target.closest("tr").childNodes[5].querySelector("h2").innerHTML = (clickedPrice * quantity).toFixed(2)
+ 
+        e.target.closest("tr").childNodes[11].querySelector(".price-total").innerHTML = (clickedPrice * quantity).toFixed(2)
+
+        let allTotalPrices = document.querySelectorAll(".price-total")
+        // console.log(`allTotalPrices ${allTotalPrices[0].innerHTML}`)
+        // console.log(`allTotalPrices ${typeof(allTotalPrices[0].innerHTML)}`)
+
+        grandTotalPriceInt = []
+
+
+        for (let i=0; i < allTotalPrices.length; i++){
+            grandTotalPriceInt.push(parseInt(allTotalPrices[i].innerHTML)) 
+        }
+        
+        // console.log(grandTotalPriceInt)
+        // console.log(`gt: ${getGrandTotal(grandTotalPriceInt)}`)
+
+        document.querySelector(".price-total-grand").innerHTML = getGrandTotal(grandTotalPriceInt).toFixed(2)
+
+        // console.log(`quantity: ${quantity}`)
+        if (e.target.value != 0) {
+            fetch(url_patch, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                quantity: e.target.value
+                })
+        })
+        .then(res => res.text()) // or res.json()
+        .then(res => console.log(`updated ${res}`))
+        } else if (e.target.value == 0) {
+            e.target.closest("tr").remove()
+            // addCartCountToLocalStorage(document.querySelectorAll(".product-title").length)
+            
+            e.preventDefault()
+            fetch(url_del, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrftoken 
+            },
+            })
+            .then(res => res.text()) // or res.json()
+            .then(res => console.log(`deleted ${res}`))
+            // .then(res => window.location.reload())
+        }
+        
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    // cartItemCount = document.querySelectorAll(".product-title").length
+    // console.log(`cart item count: ${cartItemCount}`)
+
+    let addCartCountToLocalStorage = (count) => {
+        localStorage.setItem('cartItems', count)
+    }
+
+    addCartCountToLocalStorage(document.querySelectorAll(".product-title").length) 
+    console.log(document.querySelectorAll(".product-title").length)
+
+    
+
+</script>
+<!--section end-->
+{% else %}
+	<h1 style="text-align:center;padding: 100px">No Items in cart</h1>
+{% endif %}
+
+{% endblock content %}
