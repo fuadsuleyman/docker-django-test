@@ -70,7 +70,8 @@ coverage.xml
 pytestdebug.log
 # Translations
 *.mo
-
+../.env
+../../venv
 # Django stuff:
 
 # Flask stuff:
