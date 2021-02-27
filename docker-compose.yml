@@ -5,7 +5,7 @@ services:
   python:
     build:
       context: .
-      dockerfile: docker/python/Dockerfile
+      dockerfile: docker/dev/python/Dockerfile
     volumes: 
       - ./amdtelecom:/amdtelecom
     ports: 
