@@ -3,10 +3,10 @@
 import os
 import sys
 
-
+# deploy settings-in sonuna .dev elave etdim
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'amdtelecom.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'amdtelecom.settings.dev')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

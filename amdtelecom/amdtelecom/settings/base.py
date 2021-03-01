@@ -21,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#p_$i#w56)lc@6a0)nz6&#%)3d8+yy62+-xy9zxa#6on-e!a5&'
+# SECRET_KEY = '#p_$i#w56)lc@6a0)nz6&#%)3d8+yy62+-xy9zxa#6on-e!a5&'
+
+SECRET_KEY = ''
+# deploy secret_key i bosh saxladim
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+# deploy yuxarida True-ni deyisdim
 
-ALLOWED_HOSTS = ['*', '0.0.0.0', '127.0.0.1', 'localhost']
+# ALLOWED_HOSTS = ['*', '0.0.0.0', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = []
+# deploy Allowed host bosh qalmalidi
 
 
 # Application definition
@@ -81,6 +87,7 @@ WSGI_APPLICATION = 'amdtelecom.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# deploy
 # Dockerize edende asagidakini deyisdim
 # 'HOST' : '127.0.0.1',
 
@@ -135,17 +142,34 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-#deploy
-STATIC_ROOT = "/static_files/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 
+## Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 JET_THEMES = [
     {

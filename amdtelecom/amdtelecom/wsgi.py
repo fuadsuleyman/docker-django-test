@@ -11,6 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'amdtelecom.settings')
+# deploy settings-in sonuna .dev elave etdim
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'amdtelecom.settings.dev')
 
 application = get_wsgi_application()

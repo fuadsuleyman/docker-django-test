@@ -1,2 +1,8 @@
-venv
+.idea
+venv/
 .env
+amdtelecom/settings/prod.py
+amdtelecom/amdtelecom/settings/prod.py
+
+amdtelecom/settings/prod.py
+amdtelecom/amdtelecom/debug.log
