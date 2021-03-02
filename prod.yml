@@ -33,5 +33,5 @@ services:
       - static_files:/static_files
       - ../amdtelecom/media/:/media/
     ports:
-      - 8080:80
+      - 80:80
 
